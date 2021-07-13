@@ -18,31 +18,31 @@ app.use(express.json());
 
 
 
-var connection = mysql.createConnection({
-    host: 'localhost',
-    database: 'nodejs',
-    user: 'root',
-    password: ''
-});
-connection.connect(function(err) {
-    if (err) {
-        console.error('error connecting: ' + err.stack);
-        return;
-    }
+// var connection = mysql.createConnection({
+//     host: 'localhost',
+//     database: 'nodejs',
+//     user: 'root',
+//     password: ''
+// });
+// connection.connect(function(err) {
+//     if (err) {
+//         console.error('error connecting: ' + err.stack);
+//         return;
+//     }
 
-    console.log('connected as id ' + connection.threadId);
-    http.createServer(app).listen(2021);
-});
-connection.query('SELECT * FROM users', function(error, results, fields) {
-    if (error) throw error;
-    console.log(results);
-});
-connection.end(function(err) {
-    if (err) {
-        console.error('error connecting: ' + err.stack);
-        return;
-    }
-});
+//     console.log('connected as id ' + connection.threadId);
+//     http.createServer(app).listen(2021);
+// });
+// connection.query('SELECT * FROM users', function(error, results, fields) {
+//     if (error) throw error;
+//     console.log(results);
+// });
+// connection.end(function(err) {
+//     if (err) {
+//         console.error('error connecting: ' + err.stack);
+//         return;
+//     }
+// });
 // app.use((req, res, next) => {
 //     console.log(req.query.id);
 //     console.log(req.body);
@@ -55,4 +55,4 @@ connection.end(function(err) {
 //     next();
 // });
 
-//http.createServer(app).listen(2021);
+http.createServer(app).listen(3000);

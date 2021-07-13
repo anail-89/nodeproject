@@ -19,6 +19,7 @@ var upload = multer({ storage: storage })
 
 
 router.route('/').get(async(req, res) => {
+    console.log('users router');
     let users = Object.values(JSON.parse(await fs.readFile(usersJsonPath, 'utf-8')));
     if (req.query.name) {
         users = users.filter(user => user.name.includes(req.query.name));

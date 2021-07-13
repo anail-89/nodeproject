@@ -1,5 +1,5 @@
 {
-  "name": "socialproject",
+  "name": "nodeproject",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
@@ -20,5 +20,13 @@
   },
   "author": "Liana",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anail-89/nodeproject.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anail-89/nodeproject/issues"
+  },
+  "homepage": "https://github.com/anail-89/nodeproject#readme",
   "description": ""
 }
