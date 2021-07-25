@@ -9,6 +9,9 @@
     "mime-types": "^2.1.31",
     "multer": "^1.4.2",
     "mysql": "^2.18.1",
+    "nodemon": "^2.0.12",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.4",
     "random": "^3.0.6",
     "sequelize": "^6.6.5",
     "tedious": "^11.2.0"
@@ -16,7 +19,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "node server.js",
-    "run-dev": "cross-env port=3000 NODE_ENV=development node index.js",
+    "dev": "nodemon server.js",
     "run-prod": "cross-env port=2021 NODE_ENV=production node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

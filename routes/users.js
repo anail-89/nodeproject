@@ -17,37 +17,111 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
     //var upload = multer({ dest: 'uploads/' });
 
+const Users = require('../models/Users');
+const { Sequelize } = require('sequelize');
+const Op = Sequelize.Op;
 
 router.route('/').get(async(req, res) => {
     console.log('users router');
-    let users = Object.values(JSON.parse(await fs.readFile(usersJsonPath, 'utf-8')));
-    if (req.query.name) {
-        users = users.filter(user => user.name.includes(req.query.name));
-    }
-    if (req.query.limit) {
-        users = users.slice(0, req.query.limit);
-    }
-    if (users.length > 0) {
-        res.json({ success: true, data: users });
-    } else {
-        res.json({ success: false, message: 'Users not found' });
-    }
+    /*  let users = Object.values(JSON.parse(await fs.readFile(usersJsonPath, 'utf-8')));
+     if (req.query.name) {
+         users = users.filter(user => user.name.includes(req.query.name));
+     }
+     if (req.query.limit) {
+         users = users.slice(0, req.query.limit);
+     }
+     if (users.length > 0) {
+         res.json({ success: true, data: users });
+     } else {
+         res.json({ success: false, message: 'Users not found' });
+     } */
 
     //const now = new Date();
     //res.end('Mehod ' + req.method + now.getHours() + " " + now.getMinutes());
+    console.log(req.query.name);
+    if (req.query.name || req.query.username || req.query.filter) {
+        let options = {};
+
+        if (req.query.name) {
+
+            options.where.name = {
+                name: {
+                    [Op.like]: `%req.query.name%`
+                }
+            };
+
+
+        }
+        if (req.query.username) {
+            options.where.username = {
+                [Op.like]: '%' + req.query.username + '%'
+            };
+        }
+        let limit = {};
+        if (req.query.limit) {
+            limit = { limit: req.query.limit };
+        }
+        Users.findAll(options, limit).then(row => {
+            res.json(row);
+        }).catch(err => res.json(err));
+    } else {
+        Users.findAll().then(row => {
+            res.json(row);
+        }).catch(err => res.json(err));
+
+    }
+
+    //request with postgresql
+
+
 }).post(upload.single('image'), async(req, res) => {
     try {
-        const data = JSON.parse(await fs.readFile(usersJsonPath), 'utf-8');
-        if (data && data[req.body.username]) {
-            // await fs.unlink(usersJsonPath);
-            throw new Error('User exists');
+        //const data = JSON.parse(await fs.readFile(usersJsonPath), 'utf-8');
+        /*  Users.create({
+             name: req.body.name,
+             username: req.body.username,
+             file: req.file.path,
+             password: req.body.password,
+             email: req.body.email,
+             isActive: true
+         }).then(users => res.end('ok')).catch(err => res.end(err)); */
 
-        } else {
-            data[req.body.username] = { username: req.body.username, 'name': req.body.name, 'path': req.file.path };
+        Users.findAll({
+            where: {
+                username: {
+                    [Op.like]: '%' + req.body.username + '%'
+                }
+            }
+        }).then(users => {
+            if (users.length > 0) {
+                res.json({ success: false, data: null, message: 'User exists' })
 
-            fs.writeFile(usersJsonPath, JSON.stringify(data));
-            res.json({ status: 'user created', data: JSON.stringify(data) });
-        }
+            } else {
+                Users.create({
+                    name: req.body.name,
+                    username: req.body.username,
+                    file: req.file.path,
+                    password: req.body.password,
+                    email: req.body.email,
+                    isActive: true
+
+                });
+                res.json({ success: true, data: {}, message: 'User successfully created' });
+
+
+            }
+        }).catch(err => res.json({ success: false, data: null, message: err.message }));
+
+        /* if (data && data[req.body.username]) {
+             // await fs.unlink(usersJsonPath);
+             throw new Error('User exists');
+
+         } else {
+             data[req.body.username] = { username: req.body.username, 'name': req.body.name, 'path': req.file.path };
+
+             fs.writeFile(usersJsonPath, JSON.stringify(data));
+             res.json({ status: 'user created', data: JSON.stringify(data) });
+         }*/
     } catch (err) {
         res.json({ success: false, data: null, message: err.message });
     }
