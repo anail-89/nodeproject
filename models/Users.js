@@ -1,35 +1,35 @@
-const Sequalize = require('sequelize');
+const Sequelize = require('sequelize');
 const db = require('../config/db');
 
 const Users = db.define('users', {
     id: {
-        type: Sequalize.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true
     },
     name: {
-        type: Sequalize.STRING,
+        type: Sequelize.STRING,
         allowNull: false
     },
     username: {
-        type: Sequalize.STRING,
+        type: Sequelize.STRING,
         allowNull: false
     },
-    image: {
-        type: Sequalize.STRING,
+    path: {
+        type: Sequelize.STRING,
         allowNull: true
     },
     password: {
-        type: Sequalize.STRING,
+        type: Sequelize.STRING,
         allowNull: false
     },
     isActive: {
-        type: Sequalize.STRING,
+        type: Sequelize.STRING,
         default: true
     },
     email: {
-        type: Sequalize.STRING,
+        type: Sequelize.STRING,
         allowNull: false
     }
 
