@@ -11,14 +11,21 @@ const db = require('./config/db');
 db.authenticate()
     .then(() => {
         console.log('Database connected...');
-
-        db.query('CREATE TABLE IF NOT EXISTS Users (id serial PRIMARY KEY, name VARCHAR(50), username VARCHAR(50) UNIQUE NOT NULL,image VARCHAR(250), email VARCHAR(200) UNIQUE NOT NULL, password VARCHAR(100))', (err, res) => {
+        db.sync();
+        /*db.query('CREATE TABLE IF NOT EXISTS Users (id serial PRIMARY KEY, name VARCHAR(50), username VARCHAR(50) UNIQUE NOT NULL,image VARCHAR(250), email VARCHAR(200) UNIQUE NOT NULL, password VARCHAR(100))', (err, res) => {
             if (err) throw new Error(err);
             else {
                 console.log('success created table');
 
             }
-        })
+        });*/
+        /* db.query('CREATE TABLE IF NOT EXISTS Posts (id serial PRIMARY KEY, title VARCHAR(250), description TEXT,author )', (err, res) => {
+             if (err) throw new Error(err);
+             else {
+                 console.log('success created table');
+
+             }
+         });*/
 
     })
     .catch((err) => console.log(err));

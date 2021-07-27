@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../config/db');
 
+
 const Users = db.define('users', {
     id: {
         type: Sequelize.INTEGER,
@@ -34,5 +35,9 @@ const Users = db.define('users', {
     }
 
 });
-
+associate: (models) => {
+    Users.hasMany(models.posts, {
+        foreignKey: 'id'
+    });
+};
 module.exports = Users;

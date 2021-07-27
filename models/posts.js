@@ -18,12 +18,15 @@ const Posts = db.define('posts', {
     },
     author: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
-            model: 'Users', // 'fathers' refers to table name
-            key: 'id', // 'id' refers to column name in fathers table
+            model: 'users',
+            key: 'id',
         }
     }
 
 }, { timestamps: true, versionKey: false });
-
+Posts.belongsTo(models.Users, {
+    foreignKey: 'id'
+});
 module.exports = Posts;
