@@ -34,10 +34,11 @@ const Users = db.define('users', {
         allowNull: false
     }
 
+
 });
 associate: (models) => {
     Users.hasMany(models.posts, {
-        foreignKey: 'id'
-    });
-};
+        foreignKey: 'author'
+    })
+}
 module.exports = Users;

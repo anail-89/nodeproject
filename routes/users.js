@@ -16,7 +16,7 @@ let storage = multer.diskStorage({
 
 let upload = multer({ storage: storage })
 
-const Users = require('../models/Users');
+const Users = require('../models/users');
 const { Sequelize } = require('sequelize');
 const Op = Sequelize.Op;
 
