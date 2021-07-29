@@ -1,17 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const Posts = require('../models/posts');
-const users = require('../models/users');
+const { sequelize, Sequelize } = require('../config/db');
 
+const Users = require('../models/users');
+const Posts = require('../models/posts')(sequelize, Sequelize);
+//const uuid = require('uuid/v4');
 router.route('/').get(async(req, res) => {
-    const posts = await Posts.findAll({ include: 'author' });
+    //{ include: [{ model: Users }] }
+    const posts = await Posts.findAll({ include: [{ model: sequelize.users }] }).catch(err => res.json(err.message));
+    console.log(posts);
     res.json(posts);
 }).post(async(req, res) => {
     try {
         let post = {
             title: req.body.title,
             description: req.body.description,
-            author: req.body.userId
+            author: req.body.author
 
         };
         await Posts.create(post);

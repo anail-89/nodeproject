@@ -1,44 +1,61 @@
-const Sequelize = require('sequelize');
-const db = require('../config/db');
-const { DataTypes } = require('sequelize');
-
-const Users = db.define('users', {
+const uuid = require('uuid');
+module.exports = (sequelize, DataTypes) => {
+const Users = sequelize.define('users', {
     id: {
         type: DataTypes.UUID,
+        // defaultValue: DataTypes.UUIDV4,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true
     },
     name: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     username: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     path: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: true
     },
     password: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     isActive: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         default: true
     },
     email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     }
+}, {
+    underscored: true
 
 
+
+});
+// associate: (models) => {
+//     Users.hasMany(models.posts, {
+
+<<
+<< << < HEAD
 });
 associate: (models) => {
     Users.hasMany(models.posts, {
         foreignKey: 'author'
     });
 }
-module.exports = Users;
+module.exports = Users; ===
+=== =
+//         foreignKey: {
+//             name: 'uid',
+//             allowNull: false
+//         }
+//     });
+// }
+return Users;
+} >>>
+>>> > c56c5b0833db447bb1c68f1ff4e702c24a2cff20

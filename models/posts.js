@@ -1,32 +1,31 @@
-const Sequelize = require('sequelize');
-const db = require('../config/db');
-
-const Posts = db.define('posts', {
-    id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-    },
-    title: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    description: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    author: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id',
+const uuid = require('uuid');
+module.exports = (sequelize, DataTypes) => {
+    const Posts = sequelize.define('posts', {
+        id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            // defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        author: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            // references: {
+            //     model: 'users',
+            //     key: 'id',
+            // }
         }
-    }
 
-}, { timestamps: true, versionKey: false });
-associate: models => {
-    Posts.belongsTo(models.users);
+    }, { timestamps: true, versionKey: false, underscore: true });
+
+    return Posts;
 };
-module.exports = Posts;
