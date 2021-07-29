@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
 const db = require('../config/db');
-
+const { DataTypes } = require('sequelize');
 
 const Users = db.define('users', {
     id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true
@@ -39,6 +39,6 @@ const Users = db.define('users', {
 associate: (models) => {
     Users.hasMany(models.posts, {
         foreignKey: 'author'
-    })
+    });
 }
 module.exports = Users;

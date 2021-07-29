@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Posts = require('../models/posts');
-const Users = require('../models/users');
+const users = require('../models/users');
 
 router.route('/').get(async(req, res) => {
-    const posts = await Posts.findAll({ include: [{ model: Users }] }).catch(err => res.json(err.message));
+    const posts = await Posts.findAll({ include: 'author' });
     res.json(posts);
 }).post(async(req, res) => {
     try {

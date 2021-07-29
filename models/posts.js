@@ -26,7 +26,7 @@ const Posts = db.define('posts', {
     }
 
 }, { timestamps: true, versionKey: false });
-// Posts.associate = models => {
-//     Posts.belongsTo(models.Users);
-// };
+associate: models => {
+    Posts.belongsTo(models.users);
+};
 module.exports = Posts;
