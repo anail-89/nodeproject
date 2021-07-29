@@ -15,11 +15,10 @@ let storage = multer.diskStorage({
 });
 
 let upload = multer({ storage: storage })
-
-const Users = require('../models/users');
-const { Sequelize } = require('sequelize');
+const { sequelize, Sequelize } = require('../config/db');
+const Users = require('../models/users')(sequelize, Sequelize);
+//const { Sequelize } = require('sequelize');
 const Op = Sequelize.Op;
-
 router.route('/').get(async(req, res) => {
 
     if (req.query.name || req.query.username || req.query.limit) {

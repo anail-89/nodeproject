@@ -1,44 +1,50 @@
-const Sequelize = require('sequelize');
-const db = require('../config/db');
+const uuid = require('uuid');
+module.exports = (sequelize, DataTypes) => {
+    const Users = sequelize.define('users', {
+        id: {
+            type: DataTypes.UUID,
+            // defaultValue: DataTypes.UUIDV4,
+            allowNull: false,
+            primaryKey: true
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        path: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        isActive: {
+            type: DataTypes.STRING,
+            default: true
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false
+        }
+    }, {
+        underscored: true
 
 
-const Users = db.define('users', {
-    id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-    },
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    username: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    path: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    password: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    isActive: {
-        type: Sequelize.STRING,
-        default: true
-    },
-    email: {
-        type: Sequelize.STRING,
-        allowNull: false
-    }
 
+    });
+    // associate: (models) => {
+    //     Users.hasMany(models.posts, {
 
-});
-associate: (models) => {
-    Users.hasMany(models.posts, {
-        foreignKey: 'author'
-    })
+    //         foreignKey: {
+    //             name: 'uid',
+    //             allowNull: false
+    //         }
+    //     });
+    // }
+    return Users;
 }
-module.exports = Users;
