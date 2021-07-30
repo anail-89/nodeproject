@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 // Option 2: Passing parameters separately (other dialects)
-const sequelize = new Sequelize('test3', 'postgres', 'root', {
+const sequelize = new Sequelize('test5', 'postgres', 'root', {
     host: 'localhost',
     dialect: 'postgres'
 });
@@ -29,16 +29,21 @@ db.posts = require('../models/posts.js')(sequelize, Sequelize);
 //Relations 
 //db.comments.belongsTo(db.posts);
 //db.posts.hasMany(db.comments);
-//db.posts.belongsTo(db.users);
-db.users.hasMany(db.posts, {
-    as: 'userPosts',
+db.posts.belongsTo(db.users, {
     foreignKey: 'userId'
 });
-
-Object.keys(db).forEach((modelName) => {
-    if ('associate' in db[modelName]) {
-        db[modelName].associate(db);
-    }
+db.users.hasMany(db.posts, {
+    // as: 'userPosts',
+    foreignKey: 'userId'
 });
+db.users.associate(db);
+db.posts.associate(db);
+// Object.keys(db).forEach((modelName) => {
+//     console.log(db[modelName]);
+//     if (db[modelName].associate) {
+//         console.log(db[modelName], 'associate');
+//         db[modelName].associate(db);
+//     }
+// });
 
 module.exports = db;

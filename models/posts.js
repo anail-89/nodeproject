@@ -18,15 +18,21 @@ module.exports = (sequelize, DataTypes) => {
         userId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            // references: {
-            //     model: 'users',
-            //     key: 'id',
-            // }
-        }
+            references: {
+                model: 'Users',
+                key: 'id',
+            }
+        },
+        modelName: 'Posts'
 
     }, { tableName: 'posts', timestamps: true, underscore: true });
-    associate: (models) => {
-        Posts.belongsTo(models.users, { as: 'userPosts' });
+    Posts.associate = (models) => {
+        console.log(models.users);
+        console.log('jdsfhjdjfkdjfkd');
+        Posts.belongsTo(models.Users, {
+            as: 'Users',
+            foreignKey: 'userId'
+        });
     }
     return Posts;
 };

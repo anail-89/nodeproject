@@ -2,15 +2,28 @@ const express = require('express');
 const router = express.Router();
 const { sequelize, Sequelize } = require('../config/db');
 
-const Users = require('../models/users');
+//const Users = require('../models/users');
 const Posts = require('../models/posts')(sequelize, Sequelize);
 const users = require('../models/users')(sequelize, Sequelize);
 
 router.route('/').get(async(req, res) => {
 
-    const posts = await Posts.findAll({ include: [{ model: users, as: 'usersPosts' }] }).catch(err => res.json(err.message));
-    console.log(posts);
-    res.json(posts);
+    const posts = await Posts.findAll({
+        include: [{
+            model: users
+
+            // as: 'usersPosts' 
+
+        }]
+    }).then(posts => {
+        if (posts && posts.length > 0) {
+            res.json(posts);
+        } else {
+            res.end('data chka');
+        }
+    }).catch(err => res.json(err.message));
+    // console.log(posts);
+
 }).post(async(req, res) => {
     try {
         let post = {
