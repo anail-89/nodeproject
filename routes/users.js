@@ -60,6 +60,7 @@ router.route('/').get(async(req, res) => {
 
 
 }).post(upload.single('image'), async(req, res) => {
+
     try {
 
         await Users.findAll({

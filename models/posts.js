@@ -1,10 +1,9 @@
-const uuid = require('uuid');
 module.exports = (sequelize, DataTypes) => {
-    const Posts = sequelize.define('posts', {
+
+    const Posts = sequelize.define('Posts', {
         id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            // defaultValue: DataTypes.UUIDV4,
             autoIncrement: true,
             primaryKey: true
         },
@@ -16,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        author: {
-            type: DataTypes.UUID,
+        userId: {
+            type: DataTypes.INTEGER,
             allowNull: false,
             // references: {
             //     model: 'users',
@@ -25,7 +24,9 @@ module.exports = (sequelize, DataTypes) => {
             // }
         }
 
-    }, { timestamps: true, versionKey: false, underscore: true });
-
+    }, { tableName: 'posts', timestamps: true, underscore: true });
+    associate: (models) => {
+        Posts.belongsTo(models.users, { as: 'userPosts' });
+    }
     return Posts;
 };
