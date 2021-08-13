@@ -1,28 +1,22 @@
-const uuid = require('uuid');
 module.exports = (sequelize, DataTypes) => {
     const Posts = sequelize.define('posts', {
         id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            // defaultValue: DataTypes.UUIDV4,
             autoIncrement: true,
             primaryKey: true
         },
         title: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(515),
             allowNull: false
         },
         description: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(1000),
             allowNull: true
         },
-        author: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            // references: {
-            //     model: 'users',
-            //     key: 'id',
-            // }
+        author_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
 
     }, { timestamps: true, versionKey: false, underscore: true });
