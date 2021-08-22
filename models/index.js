@@ -11,7 +11,10 @@ const sequelize = new Sequelize('test8', 'postgres', 'root', {
 const db = {};
 
 db.Sequelize = Sequelize;
+
+
 db.sequelize = sequelize;
+
 console.log(sequelize);
 //Models/tables
 db.Users = require('./users.js')(sequelize, Sequelize);
