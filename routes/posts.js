@@ -2,37 +2,36 @@ const express = require('express');
 const router = express.Router();
 const { sequelize, Sequelize } = require('../config/db');
 
-//const Users = require('../models/users');
-const Posts = require('../models/posts')(sequelize, Sequelize);
-const users = require('../models/users')(sequelize, Sequelize);
+const { Users: usersModel } = require('../models');
+const { Posts: postsModel } = require('../models');
 
 router.route('/').get(async(req, res) => {
 
-    const posts = await Posts.findAll({
+
+    const query = {
         include: [{
-            model: users
-
-            // as: 'usersPosts' 
-
+            model: usersModel,
+            as: 'postsWithUsers'
         }]
-    }).then(posts => {
-        if (posts && posts.length > 0) {
+    }
+    return postsModel.findAll(query)
+        .then(posts => {
+
+            console.log(posts);
+            console.log(posts);
             res.json(posts);
-        } else {
-            res.end('data chka');
-        }
-    }).catch(err => res.json(err.message));
-    // console.log(posts);
+        })
+        .catch(err => res.json(err.message));
 
 }).post(async(req, res) => {
     try {
         let post = {
             title: req.body.title,
             description: req.body.description,
-            userId: req.body.author
+            author_id: req.body.author
 
         };
-        await Posts.create(post);
+        await postsModel.create(post);
         res.json({ success: true, data: JSON.stringify(post), message: 'Post successfully created' });
     } catch (err) {
         res.json({ success: false, data: null, message: err.message });

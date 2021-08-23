@@ -5,7 +5,7 @@ const router = require('./router');
 const cors = require('cors');
 //const mysql = require('mysql');
 //database
-const db = require('./config/db');
+const db = require('./models');
 
 
 //test db connection
@@ -35,14 +35,14 @@ global.__homedir = __dirname;
 //db.sequelize.sync({}).then(() => {
 db.sequelize.authenticate().then(() => {
     console.log('connected');
-    db.sequelize.sync({}).then(() => {
-        console.log('sync');
-        app.use(cors());
-        app.use(express.urlencoded({ extended: false }));
-        app.use(express.json());
-        router(app);
-        http.createServer(app).listen(3000);
-    });
+    //db.sequelize.sync({}).then(() => {
+    console.log('sync');
+    app.use(cors());
+    app.use(express.urlencoded({ extended: false }));
+    app.use(express.json());
+    router(app);
+    http.createServer(app).listen(3000);
+    //});
 }).catch(err => console.log(err.message));
 
 //});

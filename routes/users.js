@@ -74,6 +74,7 @@ router.route('/').get(async(req, res) => {
                 res.json({ success: false, data: null, message: 'User exists' })
 
             } else {
+                //console.log(req.file);
                 let user = {
                     name: req.body.name,
                     username: req.body.username,

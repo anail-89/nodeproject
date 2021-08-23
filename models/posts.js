@@ -8,13 +8,14 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true
         },
         title: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(515),
             allowNull: false
         },
         description: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(1000),
             allowNull: true
         },
+<<<<<<< HEAD
         userId: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -24,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         modelName: 'Posts'
+=======
+        author_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        }
+
+    }, { timestamps: true, versionKey: false, underscore: true });
+>>>>>>> 66a0ecf3d57dd4476d566584c9465022d7728d9d
 
     }, { tableName: 'posts', timestamps: true, underscore: true });
     Posts.associate = (models) => {
