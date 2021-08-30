@@ -1,7 +1,7 @@
 // const creds = {
 //     development: {
 //         username: 'postgres',
-//         password: 'root',
+//         password: 'postgres',
 //         database: 'test8',
 //         host: 'localhost',
 //         dialect: 'postgresql'
@@ -46,7 +46,7 @@
 //     }
 // });
 const { Sequelize } = require('sequelize');
-const sequelize = new Sequelize('test8', 'postgres', 'root', {
+const sequelize = new Sequelize('test8', 'postgres', 'postgres', {
     host: 'localhost',
     dialect: 'postgresql'
 });
