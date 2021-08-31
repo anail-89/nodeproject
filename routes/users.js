@@ -6,7 +6,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const usersJsonPath = path.join(__homedir, './users.json');
 const UsersCtrl = require('../controllers/users.ctrl');
-
+const { body, validationResult } = require('express-validator');
 let storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'uploads/')
@@ -71,23 +71,25 @@ router.route('/').get(async(req, res) => {
     }
 
 
-}).post(upload.single('image'), async(req, res) => {
+}).post(
+    body('name').exists().isLength({ min: 6 }),
+    upload.single('image'), async(req, res) => {
 
-    try {
+        try {
 
-        const user = await UsersCtrl.add({
-            name: req.body.name,
-            username: req.body.username,
-            file: req.file
-        });
-        res.json({ success: true, data: JSON.stringify(user), message: 'User successfully created' });
+            const user = await UsersCtrl.add({
+                name: req.body.name,
+                username: req.body.username,
+                file: req.file
+            });
+            res.json({ success: true, data: JSON.stringify(user), message: 'User successfully created' });
 
-    } catch (err) {
-        //await fs.unlink(path.join(__homedir,req.file.path));
-        res.json({ success: false, data: null, message: err.message });
-    }
+        } catch (err) {
+            //await fs.unlink(path.join(__homedir,req.file.path));
+            res.json({ success: false, data: null, message: err.message });
+        }
 
-});
+    });
 
 router.route('/:username').get(async(req, res) => {
     console.log(req.params.username);
