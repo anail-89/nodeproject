@@ -5,6 +5,8 @@ const mimeType = require('mime-types');
 const fs = require('fs').promises;
 const path = require('path');
 const usersJsonPath = path.join(__homedir, './users.json');
+const UsersCtrl = require('../controllers/users.ctrl');
+
 let storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'uploads/')
@@ -17,6 +19,8 @@ let storage = multer.diskStorage({
 let upload = multer({ storage: storage })
 const { sequelize, Sequelize } = require('../config/db');
 const Users = require('../models/users')(sequelize, Sequelize);
+const { Users: usersModel, Posts: postsModel } = require('../models');
+
 //const { Sequelize } = require('sequelize');
 const Op = Sequelize.Op;
 router.route('/').get(async(req, res) => {
@@ -28,7 +32,15 @@ router.route('/').get(async(req, res) => {
         options.where = {};
         options.attributes = {};
         options.attributes = ['name', 'username'];
-
+        options.include = [{
+            model: postsModel,
+            as: 'userPosts',
+            // limit: 10,
+            attributes: ['id', 'title', 'description'],
+            order: [
+                ['id', 'DESC']
+            ]
+        }];
         if (req.query.limit) {
             options.limit = {};
             options.limit = Number(req.query.limit);
@@ -44,7 +56,7 @@ router.route('/').get(async(req, res) => {
             }
         }
 
-        await Users.findAll(options).then(users => {
+        await usersModel.findAll(options).then(users => {
 
             res.json({ success: true, data: users });
 
@@ -63,35 +75,15 @@ router.route('/').get(async(req, res) => {
 
     try {
 
-        await Users.findAll({
-            where: {
-                username: {
-                    [Op.like]: `%${req.body.username}%`
-                }
-            }
-        }).then(async users => {
-            if (users.length > 0) {
-                res.json({ success: false, data: null, message: 'User exists' })
-
-            } else {
-                //console.log(req.file);
-                let user = {
-                    name: req.body.name,
-                    username: req.body.username,
-                    path: req.file.path,
-                    password: req.body.password,
-                    email: req.body.email,
-                    isActive: true
-
-                };
-                await Users.create(user);
-                await delete user.password;
-                res.json({ success: true, data: JSON.stringify(user), message: 'User successfully created' });
-
-            }
-        }).catch(err => res.json({ success: false, data: null, message: err.message }));
+        const user = await UsersCtrl.add({
+            name: req.body.name,
+            username: req.body.username,
+            file: req.file
+        });
+        res.json({ success: true, data: JSON.stringify(user), message: 'User successfully created' });
 
     } catch (err) {
+        //await fs.unlink(path.join(__homedir,req.file.path));
         res.json({ success: false, data: null, message: err.message });
     }
 

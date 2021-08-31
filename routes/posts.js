@@ -5,8 +5,6 @@ const { sequelize, Sequelize } = require('../config/db');
 const { Users: usersModel } = require('../models');
 const { Posts: postsModel } = require('../models');
 
-
-//const { Sequelize } = require('sequelize');
 const Op = Sequelize.Op;
 router.route('/').get(async(req, res) => {
 
@@ -20,8 +18,6 @@ router.route('/').get(async(req, res) => {
     return postsModel.findAll(query)
         .then(posts => {
 
-            console.log(posts);
-            console.log(posts);
             res.json(posts);
         })
         .catch(err => res.json(err.message));
@@ -31,17 +27,20 @@ router.route('/').get(async(req, res) => {
         const user = await usersModel.findByPk(req.body.author);
 
         if (!user) {
-            throw new Error('User not found!');
+            throw new Error('User not exists!');
         }
         let title = req.body.title;
+
+        //find posts like a new post
+        const regexp = new RegExp('\([1-9]\)', 'g');
+        const where = regexp.test(title.trim()) ? `%${title.slice(0,title.trim().length-3)}%` : title;
+
         await postsModel.findAll({
             where: {
                 title: {
-                    [Op.iLike]: `%${req.body.title}%`
-
+                    [Op.iLike]: `%${where}%`
                 },
                 author_id: [req.body.author]
-
 
             },
             order: [
@@ -49,30 +48,23 @@ router.route('/').get(async(req, res) => {
             ],
             limit: 1
         }).then(async(post) => {
-            //uxxel
+
             if (post.length > 0) {
-                console.log(post[0].title);
+
                 const regexp = new RegExp('\([1-9]\)', 'g');
-                console.log(regexp);
 
                 if (regexp.test(post[0].title.trim())) {
-
-                    post[0].title.replace(regexp, post[0].title.charAt(post[0].title.length - 1));
+                    let newValue = +post[0].title.trim().charAt(post[0].title.length - 2) + 1;
+                    title = post[0].title.trim().slice(0, post[0].title.trim().length - 2) + newValue + ')';
                 } else {
-                    console.log('false');
+                    title = post[0].title.trim() + '(1)';
                 }
 
-            } else {
-                console.log('post chka');
             }
-
-            title += '(1)';
-
-
 
         }).catch(e => console.log(e));
         let post = {
-            title: req.body.title,
+            title: title,
             description: req.body.description,
             author_id: req.body.author
 
