@@ -72,9 +72,14 @@ router.route('/').get(async(req, res) => {
 
 
 }).post(
-    body('name').exists().isLength({ min: 6 }),
-    upload.single('image'), async(req, res) => {
 
+    upload.single('image'),
+    body('name').exists().bail().isLength({ min: 6 }),
+    async(req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.mapped() });
+        }
         try {
 
             const user = await UsersCtrl.add({
