@@ -12,6 +12,21 @@ const AppError = require('../managers/app-error');
 const PostsCtrl = require('../controllers/posts.ctrl');
 const Op = Sequelize.Op;
 const validationResult = require('../middlewares/validation-result');
+router.route('/:id').get(
+    param('id').exists(),
+    validationResult,
+    async(req, res) => {
+        const responseHandler = ResponseManager.getResponseHandler(res);
+        try {
+            const post = await PostsCtrl.getById(req.params.id);
+            console.log(post);
+            responseHandler.onSuccess(post, '');
+        } catch (e) {
+            responseHandler.onError(e, e.message);
+        }
+
+
+    });
 router.route('/').get(async(req, res) => {
 
 
@@ -57,9 +72,8 @@ router.route('/').get(async(req, res) => {
             // "res.json({ success: false, data: null, message: err.message });"
         }
     });
-router.route('/:id').get((req, res) => {
-    res.end('GET method');
-}).delete((req, res) => {
+
+router.route('/:id').delete((req, res) => {
     res.end('DELETE method');
 });
 

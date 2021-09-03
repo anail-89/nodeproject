@@ -6,7 +6,11 @@ const AppError = require('../managers/app-error');
 
 const Op = Sequelize.Op;
 class PostsCtrl {
-    getById() {
+    async getById(postId) {
+        console.log(postId);
+        const post = await postsModel.findByPk(postId);
+        if (post === null) throw new Error('Post not exists!');
+        return post;
 
     }
     getByAll() {
