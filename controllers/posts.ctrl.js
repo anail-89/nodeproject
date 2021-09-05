@@ -13,8 +13,16 @@ class PostsCtrl {
         return post;
 
     }
-    getByAll() {
+    getAll() {
 
+        const query = {
+            include: [{
+                model: usersModel,
+                as: 'postsWithUsers'
+            }]
+        };
+
+        return postsModel.findAll(query);
     }
     async add(data) {
         let title = data.title;

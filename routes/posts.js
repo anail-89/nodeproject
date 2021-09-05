@@ -27,23 +27,17 @@ router.route('/:id').get(
 
 
     });
-router.route('/').get(async(req, res) => {
+router.route('/').get(
+    async(req, res) => {
+        const responseHandler = ResponseManager.getResponseHandler(res);
+        try {
+            const posts = await PostsCtrl.getAll();
+            responseHandler.onSuccess(posts, '');
+        } catch (e) {
+            responseHandler.onError(e, e.message);
+        }
 
-
-    const query = {
-        include: [{
-            model: usersModel,
-            as: 'postsWithUsers'
-        }]
-    }
-    return postsModel.findAll(query)
-        .then(posts => {
-
-            res.json(posts);
-        })
-        .catch(err => res.json(err.message));
-
-}).post(
+    }).post(
     body('userId').custom(value => {
         return usersModel.findByPk(value).then(user => {
             if (!user) {

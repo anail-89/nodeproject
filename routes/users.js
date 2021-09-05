@@ -6,7 +6,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const usersJsonPath = path.join(__homedir, './users.json');
 const UsersCtrl = require('../controllers/users.ctrl');
-const { body, validationResult } = require('express-validator');
+const { body, query, param } = require('express-validator');
 let storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'uploads/')
@@ -21,53 +21,41 @@ const { sequelize, Sequelize } = require('../config/db');
 const Users = require('../models/users')(sequelize, Sequelize);
 const { Users: usersModel, Posts: postsModel } = require('../models');
 
-//const { Sequelize } = require('sequelize');
+const ResponseManager = require('../managers/response-managers');
+const AppError = require('../managers/app-error');
+
+
 const Op = Sequelize.Op;
+const validationResult = require('../middlewares/validation-result');
+//const { Sequelize } = require('sequelize');
+
+
+router.route('/:id').get(
+    param('id').exists(),
+    validationResult,
+    async(req, res) => {
+        try {
+            const responseHandler = ResponseManager.getResponseHandler(res);
+            const user = UsersCtrl.getById(req.params.id);
+            responseHandler.onSuccess(user, '');
+        } catch (e) {
+            responseHandler.onError(e, e.message);
+        }
+
+    });
 router.route('/').get(async(req, res) => {
 
-    if (req.query.name || req.query.username || req.query.limit) {
+    try {
+        const responseHandler = ResponseManager.getResponseHandler(res);
+        const users = await UsersCtrl.getAll({
+            'name': query.name ? query.name : null,
+            'username': query.username ? query.username : null,
+            'limit': query.limit ? query.limit : null,
+        });
+        responseHandler.onSuccess(users, '');
 
-        let options = {};
-
-        options.where = {};
-        options.attributes = {};
-        options.attributes = ['name', 'username'];
-        options.include = [{
-            model: postsModel,
-            as: 'userPosts',
-            // limit: 10,
-            attributes: ['id', 'title', 'description'],
-            order: [
-                ['id', 'DESC']
-            ]
-        }];
-        if (req.query.limit) {
-            options.limit = {};
-            options.limit = Number(req.query.limit);
-        }
-        if (req.query.name) {
-            options.where.name = {
-                [Op.iLike]: `%${req.query.name}%`
-            }
-        }
-        if (req.query.username) {
-            options.where.username = {
-                [Op.iLike]: `%${req.query.username}%`
-            }
-        }
-
-        await usersModel.findAll(options).then(users => {
-
-            res.json({ success: true, data: users });
-
-        }).catch(err => res.json(err));
-
-
-    } else {
-        await Users.findAll().then(users => {
-            res.json({ success: true, data: users });
-        }).catch(err => res.json({ success: false, message: 'Users not found' }));
-
+    } catch (e) {
+        responseHandler.onError(e, e.message);
     }
 
 

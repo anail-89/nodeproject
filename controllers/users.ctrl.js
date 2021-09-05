@@ -1,10 +1,47 @@
-const Users = require('../models/users');
+const { Users: usersModel } = require('../models');
 class UsersCtrl {
-    getById() {
-
+    async getById(userId) {
+        const user = await usersModel.findByPk(userId);
+        return user;
     }
-    getByAll() {
+    getAll(data) {
+        if (data.name || data.username || data.limit) {
 
+            let options = {};
+
+            options.where = {};
+            options.attributes = {};
+            options.attributes = ['name', 'username'];
+            options.include = [{
+                model: postsModel,
+                as: 'userPosts',
+                // limit: 10,
+                attributes: ['id', 'title', 'description'],
+                order: [
+                    ['id', 'DESC']
+                ]
+            }];
+            if (data.limit) {
+                options.limit = {};
+                options.limit = Number(data.limit);
+            }
+            if (data.name) {
+                options.where.name = {
+                    [Op.iLike]: `%${data.name}%`
+                }
+            }
+            if (data.username) {
+                options.where.username = {
+                    [Op.iLike]: `%${data.username}%`
+                }
+            }
+
+            return usersModel.findAll(options);
+
+        } else {
+            return usersModel.findAll();
+
+        }
     }
     async add(data) {
         await Users.findAll({
