@@ -7,6 +7,7 @@ const path = require('path');
 const usersJsonPath = path.join(__homedir, './users.json');
 const UsersCtrl = require('../controllers/users.ctrl');
 const { body, query, param } = require('express-validator');
+
 let storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'uploads/')
@@ -16,7 +17,7 @@ let storage = multer.diskStorage({
     }
 });
 
-let upload = multer({ storage: storage })
+let upload = multer({ storage: storage });
 const { sequelize, Sequelize } = require('../config/db');
 const Users = require('../models/users')(sequelize, Sequelize);
 const { Users: usersModel, Posts: postsModel } = require('../models');
@@ -27,11 +28,13 @@ const AppError = require('../managers/app-error');
 
 const Op = Sequelize.Op;
 const validationResult = require('../middlewares/validation-result');
+const responseManager = require('../middlewares/response-handler');
 //const { Sequelize } = require('sequelize');
 
 
 router.route('/:id').get(
     param('id').exists(),
+    responseManager,
     validationResult,
     async(req, res) => {
         try {
@@ -63,6 +66,7 @@ router.route('/').get(async(req, res) => {
 
     upload.single('image'),
     body('name').exists().bail().isLength({ min: 6 }),
+    body('password').exists().bail().isLength({ min: 6 }),
     async(req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

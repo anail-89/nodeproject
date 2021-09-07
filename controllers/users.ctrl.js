@@ -1,4 +1,5 @@
 const { Users: usersModel } = require('../models');
+const bcrypt = require('../managers/bcrypt');
 class UsersCtrl {
     async getById(userId) {
         const user = await usersModel.findByPk(userId);
@@ -60,7 +61,7 @@ class UsersCtrl {
                     name: data.name,
                     username: data.username,
                     path: data.file.path,
-                    password: data.password,
+                    password: await bcrypt.hash(data.password),
                     email: data.email,
                     isActive: true
 
