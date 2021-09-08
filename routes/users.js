@@ -67,23 +67,31 @@ router.route('/').get(async(req, res) => {
     upload.single('image'),
     body('name').exists().bail().isLength({ min: 6 }),
     body('password').exists().bail().isLength({ min: 6 }),
+    validationResult,
+    responseManager,
+
     async(req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.mapped() });
-        }
+        //const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json({ errors: errors.mapped() });
+        // }
         try {
 
             const user = await UsersCtrl.add({
                 name: req.body.name,
                 username: req.body.username,
-                file: req.file
+                file: req.file,
+                email: req.body.email,
+                password: req.body.password
             });
-            res.json({ success: true, data: JSON.stringify(user), message: 'User successfully created' });
+            console.log(user);
+            res.onSuccess(user);
+            // res.json({ success: true, data: JSON.stringify(user), message: 'User successfully created' });
 
-        } catch (err) {
+        } catch (e) {
             //await fs.unlink(path.join(__homedir,req.file.path));
-            res.json({ success: false, data: null, message: err.message });
+            res.onError(e);
+            // res.json({ success: false, data: null, message: err.message });
         }
 
     });

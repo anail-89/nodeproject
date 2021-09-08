@@ -1,5 +1,10 @@
 const { Users: usersModel } = require('../models');
 const bcrypt = require('../managers/bcrypt');
+const { sequelize, Sequelize } = require('../config/db');
+const Users = require('../models/users')(sequelize, Sequelize);
+const Op = Sequelize.Op;
+const AppError = require('../managers/app-error');
+
 class UsersCtrl {
     async getById(userId) {
         const user = await usersModel.findByPk(userId);
@@ -45,33 +50,39 @@ class UsersCtrl {
         }
     }
     async add(data) {
-        await Users.findAll({
+        const users = await usersModel.findAll({
             where: {
                 username: {
                     [Op.like]: `%${data.username}%`
                 }
             }
-        }).then(async users => {
-            if (users.length > 0) {
-                res.json({ success: false, data: null, message: 'User exists' })
-
-            } else {
-                //console.log(req.file);
-                let user = {
-                    name: data.name,
-                    username: data.username,
-                    path: data.file.path,
-                    password: await bcrypt.hash(data.password),
-                    email: data.email,
-                    isActive: true
-
-                };
-                return Users.create(user);
-                // await delete user.password;
+        });
 
 
-            }
-        }).catch(err => res.json({ success: false, data: null, message: err.message }));
+
+
+        if (users.length > 0) {
+            throw new Error('User exists');
+            //res.json({ success: false, data: null, message: 'User exists' })
+
+        } else {
+            //console.log(req.file);
+            let user = await Users.create({
+                name: data.name,
+                username: data.username,
+                path: data.file.path,
+                password: await bcrypt.hash(data.password),
+                email: data.email,
+                isActive: true
+
+            });
+
+            return user;
+            // await delete user.password;
+
+
+        }
+
 
     }
     update() {
