@@ -58,9 +58,6 @@ class UsersCtrl {
             }
         });
 
-
-
-
         if (users.length > 0) {
             throw new Error('User exists');
             //res.json({ success: false, data: null, message: 'User exists' })
