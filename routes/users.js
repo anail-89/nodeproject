@@ -71,27 +71,24 @@ router.route('/').get(async(req, res) => {
     responseManager,
 
     async(req, res) => {
-        //const errors = validationResult(req);
-        // if (!errors.isEmpty()) {
-        //     return res.status(400).json({ errors: errors.mapped() });
-        // }
+
         try {
 
-            const user = await UsersCtrl.add({
+            let user = await UsersCtrl.add({
                 name: req.body.name,
                 username: req.body.username,
                 file: req.file,
                 email: req.body.email,
                 password: req.body.password
             });
-            console.log(user);
-            res.onSuccess(user);
-            // res.json({ success: true, data: JSON.stringify(user), message: 'User successfully created' });
+
+            delete user.dataValues.password;
+            res.onSuccess(user, 'User successfully created');
 
         } catch (e) {
             //await fs.unlink(path.join(__homedir,req.file.path));
             res.onError(e);
-            // res.json({ success: false, data: null, message: err.message });
+
         }
 
     });
