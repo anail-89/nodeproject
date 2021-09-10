@@ -4,16 +4,17 @@ const { sequelize, Sequelize } = require('../config/db');
 const Users = require('../models/users')(sequelize, Sequelize);
 const Op = Sequelize.Op;
 const AppError = require('../managers/app-error');
-
+const TokenManager = require('../managers/token-manager');
 class Auth {
     async login(data) {
         console.log(data);
+        const { username, password } = data;
         const user = await usersModel.findOne({
             where: {
                 username: {
-                    [Op.like]: `%${data.username}%`
-                },
-                password: data.password
+                    [Op.like]: `%${username}%`
+                }
+                // password: bcrypt.compare(data.password
 
             }
         });
@@ -24,7 +25,14 @@ class Auth {
         // console.log(user.dataValues.length > 0);
         // console.log(user.dataValues);
         if (user !== null && typeof(user.dataValues) !== undefined) {
-            return user.dataValues;
+            console.log(user.dataValues.password);
+            console.log(await bcrypt.compare(password, user.dataValues.password));
+            if (bcrypt.compare(data.password, user.dataValues.password)) {
+                return TokenManager.encode({
+                    userId: user.dataValues.id
+                });
+            }
+            throw new AppError('Username or password is wrong', 403);
         } else {
             return false;
         }

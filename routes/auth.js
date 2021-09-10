@@ -38,15 +38,14 @@ router.route('/login').post(
     responseManager,
     async(req, res) => {
         try {
-            const login = await AuthCtrl.login({
-                username: req.body.username,
-                password: req.body.password
+            const token = await AuthCtrl.login({
+                ...req.body
             });
-            console.log(login);
-            if (login === false) {
-                throw new Error('Login failed, please enter the valid values!');
-            }
-            res.onSuccess(login, 'You successfully logged');
+            console.log(token);
+            // if (login === false) {
+            //     throw new Error('Login failed, please enter the valid values!');
+            // }
+            res.onSuccess(token, 'You successfully logged');
         } catch (e) {
             res.onError(e);
         }
