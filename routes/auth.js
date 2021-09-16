@@ -38,6 +38,7 @@ router.route('/login').post(
     responseManager,
     async(req, res) => {
         try {
+            console.log('ekaaaaav');
             const token = await AuthCtrl.login({
                 ...req.body
             });

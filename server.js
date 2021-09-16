@@ -41,7 +41,7 @@ db.sequelize.authenticate().then(() => {
         app.use(express.urlencoded({ extended: false }));
         app.use(express.json());
         router(app);
-        http.createServer(app).listen(3000);
+        http.createServer(app).listen(8080);
     });
 }).catch(err => console.log(err.message));
 
